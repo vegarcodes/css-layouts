@@ -1,0 +1,422 @@
+/**
+	CSS-layouts på 1-2-3!
+	En greie av NullSprite, 2023. Bruk som du ønsker.
+**/
+
+/**
+	Leksjon 1) Andy Bell sin CSS-reset.
+	URL: https://andy-bell.co.uk/a-more-modern-css-reset/
+	En moderne reset som gjør akkurat nok, laget for moderne nettlesere.
+**/
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	-moz-text-size-adjust: none;
+	-webkit-text-size-adjust: none;
+	text-size-adjust: none;
+}
+
+body, 
+h1, 
+h2, 
+h3, 
+h4, 
+p,
+figure, 
+blockquote, 
+dl, 
+dd {
+	margin: 0;
+}
+
+ul[role="list"],
+ol[role="list"] {
+	list-style: none;
+}
+
+body {
+	min-height: 100vh;
+	line-height: 1.5;
+}
+
+h1, 
+h2, 
+h3, 
+h4,
+button, 
+input, 
+label {
+	line-height: 1.1;
+}
+
+h1, 
+h2,
+h3, 
+h4 {
+	text-wrap: balance;
+}
+
+a:not([class]) {
+	text-decoration-skip-ink: auto;
+	color: currentColor;
+}
+
+img,
+picture {
+	max-width: 100%;
+	display: block;
+}
+
+input, 
+button,
+textarea, 
+select {
+	font: inherit;
+}
+
+textarea:not([rows]) {
+	min-height: 10em;
+}
+
+:target {
+	scroll-margin-block: 5ex;
+}
+
+
+/**
+	Leksjon 2) CSS-variabler
+	Bruk CSS-variabler for tokens og ting som kan gjenbrukes.
+	Det aller meste av look and feel kan og bør styres gjennom variabler!
+**/
+
+:root {
+	/* Farger! */
+	/* Legg til det du trenger. Jeg liker å basere farger på konteksten. */
+	--site-background-color: #EAEAEA;
+	--text-color: #000000;
+	--focus-outline-color: #004CFF;
+	--card-background-color: #FFFFFF;
+
+	/* Fonter og typografi */
+	/* Bruk systemfont by defualt. */
+	/* Her kan du endre font-stacken til å inneholde custom fonter. */
+	--site-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+
+	/* Rotstørrelse. Settes på <html>, skal være angitt i prosent. */
+	/* Dette gjør at UIet skalerer riktig for brukere som endrer skriftstørrelsen selv. */
+	/* 62.5% = 10px, 100% = 16px, 125% = 20px ... */
+	--root-font-size: 100%;
+
+	/* Spacing og generiske størrelser */
+	/* Disse faller inn i en ganske normal 4px-grid en designer vil bruke i f.eks Figma. */
+	--size-small-05: 0.250rem;
+	--size-small-10: 0.500rem;
+	--size-small-20: 0.625rem;
+	--size-small-30: 0.750rem;
+	--size-small-40: 0.875rem;
+	--size-small-50: 1.000rem;
+	--size-medium-10: 1.250rem;
+	--size-medium-20: 1.500rem;
+	--size-medium-30: 1.750rem;
+	--size-medium-40: 2.000rem;
+	--size-medium-50: 2.500rem;
+	--size-large-10: 3.000rem;
+	--size-large-20: 3.500rem;
+	--size-large-30: 4.000rem;
+	--size-large-40: 4.500rem;
+	--size-large-50: 5.000rem;
+
+	/* Layout og grid */
+	/* Containere skal fylle en viss mengde av viewporten... */
+	--container-fluid-width: 96%;
+	/* ...Men bare opp til en viss bredde! */
+	--container-small-max-width: 50rem; /* 800px */
+	--container-medium-max-width: 70rem; /* 1120px */
+	--container-large-max-width: 90rem; /* 1440px */
+
+	/* Gaps */
+	--grid-gap-small: var(--size-small-10);
+	--grid-gap-medium: var(--size-small-50);
+	--grid-gap-large: var(--size-small-medium-20);
+
+	/* Flow */
+	/* Jo større teksten er i en seksjon, jo mer space bør det være i flow'en din. */
+	/* Vi definerer disse i ems siden mellomrommet skal være avhengig av tekststørrelsen. */
+	--flow-space-small: 0.75em;
+	--flow-space-medium: 1em;
+	--flow-space-large: 1.5em;
+}
+
+
+/**
+	Leksjon 3) Basestiler
+	Litt størrelser, litt typografi samt riktige farger på lenker.
+	Denne kan utvides etter behov.
+**/
+
+html,
+body {
+	height: 100%;
+	width: 100%;
+}
+
+html {
+	font-family: var(--site-font-family);
+	font-size: var(--root-font-size);
+	background-color: var(--site-background-color);
+	color: var(--text-color);
+}
+
+
+/* Legg på focus outline, men bare på elementer som blir fokusert og ikke trykket på. */
+/* For browsere som ikke støtter det, ha en fallback. */
+:focus-visible {
+	outline: 2px solid var(--focus-outline-color);
+}
+
+@supports not selector(:focus-visible) {
+	:focus {
+		outline: 2px solid var(--focus-outline-color);
+	}
+}
+
+/* Fjern animasjoner for brukere som har slått animasjoner av på OS-nivå! */
+/* Lånt fra NAVs designsystem Aksel */
+@media (prefers-reduced-motion: reduce) {
+	html:focus-within {
+	 scroll-behavior: auto;
+	}
+	
+	*,
+	*::before,
+	*::after {
+		animation-delay: -1ms !important;
+		animation-duration: 1ms !important;
+		animation-iteration-count: 1 !important;
+		background-attachment: initial !important;
+		scroll-behavior: auto !important;
+		transition-duration: 0s !important;
+		transition-delay: 0s !important;
+	}
+}
+
+/**
+	Leksjon 4) Container
+	Du trenger en container til å holde på innholdet ditt.
+	Denne skal typisk være sentrert på siden.
+**/
+
+.container {
+	margin: 0 auto;
+	width: var(--container-fluid-width);
+}
+
+	/* Noen ganger er det greit med litt forskjellige størrelser! */
+	.container.container-small {
+		max-width: var(--container-small-max-width);
+	}
+
+	.container.container-medium {
+		max-width: var(--container-medium-max-width);
+	}
+
+	.container.container-large {
+		max-width: var(--container-large-max-width);
+	}
+
+/**
+	Leksjon 5) Grids
+	Trenger du en tolvspalters grid a la Bootstrap? Nei. Du trenger stort sett bare to ting.
+	+ En grid der du kan "stappe inn ting" og så legger de seg pent inn i lik størrelse.
+	+ Et par forhåndsdefinerte layouts der du vil ha ulik størrelse på kolonnene.
+**/
+
+.grid {
+	display: grid;
+	width: 100%;
+}
+
+	/* Pluss et par varianter med mindre/mer spacing! */
+	.grid.grid-small {
+		grid-gap: var(--grid-gap-small, 1rem);
+	}
+
+	.grid.grid-medium {
+		grid-gap: var(--grid-gap-medium, 1rem);
+	}
+
+	.grid.grid-large {
+		grid-gap: var(--grid-gap-large, 1rem);
+	}
+
+	/* Innhold legger seg automatisk i grid-kolonner og bryter ned på ny rad om det ikke er plass. */
+	/* https://css-tricks.com/snippets/css/complete-guide-grid/#aa-fluid-columns-snippet */
+	.grid.grid-auto {
+		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	}
+
+	/* Noen andre layouts som kan være kjekke å ha! */
+	.grid.grid-two-plus-one {
+		grid-template-columns: 2fr 1fr;
+	}
+
+	.grid.grid-one-plus-two {
+		grid-template-columns: 1fr 2fr;
+	}
+
+	.grid.grid-three-plus-one {
+		grid-template-columns: 3fr 1fr;
+	}
+
+	.grid.grid-one-plus-three {
+		grid-template-columns: 1fr 3fr;
+	}
+
+
+/** 
+	Leksjon 6) Flow (også kalt stack)
+	Flow layout gjør det enkelt å skape god vertikal rytme i tekst og innhold.
+	URL: https://andy-bell.co.uk/my-favourite-3-lines-of-css/
+**/
+
+.flow > * + * {
+	margin-block-start: var(--flow-space, 1em);
+}
+
+	/* Pluss et par varianter med litt mer/mindre luft der det trengs! */
+	.flow.flow-small {
+		--flow-space: var(--flow-space-small, 1em);
+	}
+
+	.flow.flow-medium {
+		--flow-space: var(--flow-space-medium, 1em);
+	}
+
+	.flow.flow-large {
+		--flow-space: var(--flow-space-large, 1em);
+	}
+
+
+/**
+	Leksjon 7) Typografi
+	Separer utseende fra semantikk i typografi - det gjør det enklere å style riktig.
+**/
+
+/* Overskrifter i fire nivåer — legg på så mange/få som du trenger! */
+.title {
+	letter-spacing: -0.02em;
+}
+
+	.title.title-level-1 {
+		font-size: var(--size-medium-50);
+	}
+
+	.title.title-level-2 {
+		font-size: var(--size-medium-30);
+	}
+
+	/* Samme størrelse som ingresstekst. */
+	.title.title-level-3 {
+		font-size: var(--size-medium-10);
+	}
+
+	/* Samme størrelse som vanlig tekst. */
+	.title.title-level-4 {
+		font-size: var(--size-small-50);
+	}
+
+/* Ingress — til ganger du trenger litt større tekst! */
+.lead {
+	font-size: var(--size-medium-10);
+	letter-spacing: -0.01em;
+}
+
+/**
+	Leksjon 8) Bokser og seksjoner
+	Webben består som regel av bokser i forskjellige størrelser.
+	Her er noen bokser du kan bruke.
+**/
+
+/* Små bokser med innhold kalles gjerne cards eller kort. */
+/* Disse har typisk en hvit bakgrunnsfarge og avrundede hjørner. */
+.card {
+	display: block;
+	background-color: var(--card-background-color);
+	padding: var(--size-small-50);
+	border-radius: var(--size-small-10);
+}
+
+/* Store bokser brukes gjerne til å fylle seksjoner med farge på siden. */
+/* Dette gjør det enkelt å "dele opp" innholdet på en pen måte. */
+/* La oss kalle en slik for et panel. */
+.panel {
+	display: block;
+	width: 100%;
+	padding: var(--size-medium-30);
+}
+
+/* Større seksjoner som dekker en hel skjermhøyde er fine for presentasjon av f.eks bilder. */
+/* La oss kalle en slik for et cover. */
+.cover {
+	display: block;
+	width: 100%;
+	height: 100vh; /* Dekker én hel skjermhøyde */
+	padding: var(--size-medium-30);
+}
+
+	/* Vanligvis vil man midtstille innholdet i et cover vertikalt og horisontalt. */
+	.cover.cover-centered {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+
+/**
+	Leksjon 9) Hjelpeklasser!
+	Lag hjelpeklasser du VET du kommer til å trenge for å sette riktige stiler "on the fly."
+	Typisk er dette klasser for margin, padding, farger og lignende.
+	Du _kan_ gå Tailwind-ruten her om du ønsker det, med en resulterende stor CSS-fil.
+**/
+
+/* Lesemodus */
+/* Wrapper du innhold med mye tekst i en .read, får du en hyggeligere leselengde. */
+/* Behagelig for alle, veldig ålreit for de som har f.eks dysleksi. */
+.read > p,
+.read > h1,
+.read > h2,
+.read > h3,
+.read > h4,
+.read > li {
+	max-width: 60ch;
+}
+
+/* Tekstjustering */
+.text-align-left { text-align: left; }
+.text-align-center { text-align: center; }
+.text-align-right { text-align: right; }
+
+/* Screen reader only */
+/* En hendig snippet som gjemmer innholdet visuelt, men ikke for skjermlesere */
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border-width: 0;
+}
+
+/**
+	Leksjon 10) Komponenter!
+	Nå står du fritt til å lage komponenter du trenger, som du trenger dem.
+	Herfra klarer du deg fint selv. Du trenger ikke min hjelp lenger.
+**/
